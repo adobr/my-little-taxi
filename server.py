@@ -1,6 +1,10 @@
-from twisted.web import server, resource
-from twisted.internet import reactor
+#!/usr/bin/env python
+import sys
 
+import mysql-python
+
+
+from twisted.web import server, resource
 from coordinates import Coordinates
 
 
@@ -44,9 +48,22 @@ Here is the rest api:
 """
         return docs
 
-root = resource.Resource()
-root.putChild("help", HelpResource())
-root.putChild("car", CarResource())
-root.putChild("nearest_cars", NearestCarsResource())
-reactor.listenTCP(80, server.Site(root))
-reactor.run()
+
+def main():
+    #from twisted.python import log
+    #log.startLogging(sys.stdout)
+
+    root = resource.Resource()
+    root.putChild("help", HelpResource())
+    root.putChild("car", CarResource())
+    root.putChild("nearest_cars", NearestCarsResource())
+
+    from twisted.enterprise import adbapi
+    cp = adbapi.ConnectionPool("MySQLdb", db="test")
+
+    from twisted.internet import reactor
+    reactor.listenTCP(80, server.Site(root))
+    reactor.run()
+
+if __name__ == '__main__':
+    main()
