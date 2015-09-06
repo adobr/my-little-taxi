@@ -1,10 +1,13 @@
 #!/usr/bin/env python
+
 import sys
-
-import mysql-python
-
-
+import time
 from twisted.web import server, resource
+from twisted.enterprise import adbapi
+from twisted.internet import reactor
+from twistar.registry import Registry
+from twistar.dbobject import DBObject
+
 from coordinates import Coordinates
 
 
@@ -13,10 +16,13 @@ class CarResource(resource.Resource):
 
     def render_GET(self, request):
         request.setHeader("content-type", "text/plain")
-        car_id = request.args.get('car')
-        print(car_id)
-
-        return "Your car is here: ."
+        # TODO: move it to POST
+        car_id = int(request.args['id'][0])
+        location = Coordinates(request.args['ll'][0])
+        car = Car(car_id=car_id, latitude=location.latitude,
+                  longitude=location.longitude, updated=time.time()) # TODO: fix timestamp
+        car.findOrCreate().addCallback(done)
+        return "Car is added."
 
     def render_POST(self, request):
         request.setHeader("content-type", "text/plain")
@@ -30,6 +36,8 @@ class NearestCarsResource(resource.Resource):
 
     def render_GET(self, request):
         request.setHeader("content-type", "text/plain")
+        #TODO: add real logic
+        Car.all().addCallback(printAll)
         return "No cars now."
 
 
@@ -49,6 +57,21 @@ Here is the rest api:
         return docs
 
 
+class Car(DBObject):
+    @classmethod
+    def tablename(cls):
+        return 'cars'
+
+
+def done(car):
+    print car
+    print car.errors
+    print "A car was just created  %s" % car.id
+
+
+def printAll(all):
+    print 'printing: %s' % all
+
 def main():
     #from twisted.python import log
     #log.startLogging(sys.stdout)
@@ -58,11 +81,12 @@ def main():
     root.putChild("car", CarResource())
     root.putChild("nearest_cars", NearestCarsResource())
 
-    from twisted.enterprise import adbapi
-    cp = adbapi.ConnectionPool("MySQLdb", db="test")
+    # Connect to the DB
+    Registry.DBPOOL = adbapi.ConnectionPool('MySQLdb', user="little_server",
+                                            passwd="ne6rexeT", db="little_taxi")
 
-    from twisted.internet import reactor
-    reactor.listenTCP(80, server.Site(root))
+    # Start reactor
+    reactor.listenTCP(8090, server.Site(root))
     reactor.run()
 
 if __name__ == '__main__':
