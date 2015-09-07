@@ -1,7 +1,8 @@
 CREATE DATABASE IF NOT EXISTS little_taxi;
 USE little_taxi;
 CREATE TABLE cars (
-    car_id INT PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    car_id VARCHAR(10),
     latitude FLOAT,
     longitude FLOAT,
     updated TIMESTAMP);
