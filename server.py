@@ -7,6 +7,14 @@ from twistar.registry import Registry
 
 from coordinates import Coordinates
 from car import Car
+from nearest import find_nearest
+
+
+def report_error(request):
+    def _report_error(error):
+        request.write("Something went wrong.")
+        request.finish()
+    return _report_error
 
 
 class CarResource(resource.Resource):
@@ -15,14 +23,16 @@ class CarResource(resource.Resource):
     def render_GET(self, request):
         request.setHeader("content-type", "text/plain")
         car_id = int(request.args['id'][0])
-        Car.findBy(car_id=car_id).addCallback(Car.report(request))
+        Car.findBy(car_id=car_id).addCallbacks(Car.report(request),
+                                               report_error(request))
         return server.NOT_DONE_YET
 
     def render_POST(self, request):
         request.setHeader("content-type", "text/plain")
         car_id = int(request.args['id'][0])
         location = Coordinates.from_string(request.args['ll'][0])
-        Car.findOrCreate(car_id=car_id).addCallback(Car.save_location(request, location))
+        Car.findOrCreate(car_id=car_id).addCallbacks(Car.save_location(request, location),
+                                                     report_error(request))
         return server.NOT_DONE_YET
 
 
@@ -33,7 +43,8 @@ class NearestCarsResource(resource.Resource):
         request.setHeader("content-type", "text/plain")
         location = Coordinates.from_string(request.args['ll'][0])
         count = int(request.args['count'][0])
-        Car.all().addCallback(Car.find_nearest(request, location, count))
+        Car.all().addCallbacks(find_nearest(request, location, count),
+                               report_error(request))
         return server.NOT_DONE_YET
 
 def main():

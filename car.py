@@ -1,4 +1,3 @@
-from heapq import nsmallest
 import datetime
 
 from twistar.dbobject import DBObject
@@ -43,25 +42,5 @@ class Car(DBObject):
 
         return _report_ok
 
-    @staticmethod
-    def find_nearest(request, location, count):
-        def _find_nearest(cars):
-            result = nsmallest(count, cars, key=lambda car: car.distance(location))
-            Car.report_nearest(request, location)(result)
-
-        return _find_nearest
-
     def distance(self, location):
         return location.distance(Coordinates(self.latitude, self.longitude))
-
-    @staticmethod
-    def report_nearest(request, location):
-        def _report(cars):
-            if not cars:
-                request.write('We have no cars at all!')
-            else:
-                for car in cars:
-                    request.write("{0}\t-\t{1:.2f}km\n".format(car.report_itself(),
-                                                             car.distance(location)))
-            request.finish()
-        return _report
