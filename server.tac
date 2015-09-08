@@ -6,7 +6,6 @@ from twisted.web import server, resource
 from twistar.dbconfig.mysql import ReconnectingMySQLConnectionPool
 from twisted.application import service, internet
 from twistar.registry import Registry
-from twisted.python.logfile import DailyLogFile
 
 
 from coordinates import Coordinates
@@ -68,23 +67,17 @@ class NearestCarsResource(resource.Resource):
 
 
 def get_web_service():
-    #from twisted.python import log
-    #log.startLogging(sys.stdout)
-
     root = resource.Resource()
     root.putChild("car", CarResource())
     root.putChild("nearest_cars", NearestCarsResource())
 
-    # Connect to the DB
     Registry.DBPOOL = ReconnectingMySQLConnectionPool('MySQLdb', user="little_server",
                                                       passwd="ne6rexeT", db="little_taxi",
                                                       cp_reconnect=True, cp_max=10)
-
-    # Create server
     web_server = server.Site(root)
     return internet.TCPServer(8090, web_server)
 
-application = service.Application("Demo application")
-logfile = DailyLogFile("little_taxi.log", ".")
+
+application = service.Application("Little server")
 service = get_web_service()
 service.setServiceParent(application)
