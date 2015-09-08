@@ -39,6 +39,7 @@ class CarResource(resource.Resource):
             return e.message
         Car.findBy(car_id=car_id).addCallbacks(Car.report(request),
                                                report_error(request))
+        # TODO: send info until connection is broken
         return server.NOT_DONE_YET
 
     def render_POST(self, request):

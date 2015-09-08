@@ -21,7 +21,6 @@ class Coordinates():
             raise Exception("Latitude can be in range [-90.0, 90.0]")
         if longitude > 180.0 or longitude < -180.0:
             raise Exception("Longittude can be in range [-180.0, 180.0]")
-        print 'Ok, ok {},{}'.format(latitude, longitude)
         return Coordinates(latitude, longitude)
 
     def __str__(self):

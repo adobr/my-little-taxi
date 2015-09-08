@@ -29,3 +29,7 @@ curl --request GET  'http://localhost:8090/car?id=42'
 * get nearest cars
 
 curl --request GET 'http://localhost:8090/nearest_cars?ll=37.412021,11.896277&count=11'
+
+Performance testing
+-------
+tests/make_requests.sh
