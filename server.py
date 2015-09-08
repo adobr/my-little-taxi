@@ -80,7 +80,8 @@ def main():
 
     # Connect to the DB
     Registry.DBPOOL = adbapi.ConnectionPool('MySQLdb', user="little_server",
-                                            passwd="ne6rexeT", db="little_taxi")
+                                            passwd="ne6rexeT", db="little_taxi",
+                                            cp_reconnect=True)
 
     # Start reactor
     reactor.listenTCP(8090, server.Site(root))
