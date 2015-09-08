@@ -6,6 +6,8 @@ from twistar.dbobject import DBObject
 
 from coordinates import Coordinates
 from report import Report
+from subscriber import Subscriber
+
 
 class Car(DBObject):
     @classmethod
@@ -22,11 +24,19 @@ class Car(DBObject):
             self.latitude = location.latitude
             self.longitude = location.longitude
             self.updated = datetime.datetime.now()
-            self.save().addCallbacks(Report(request).report_added_car,
-                                     Report(request).report_error)
+            d = self.save()
+            d.addCallback(Car.report_updated_data(request))
+            d.addErrback(Report(request).report_error)
 
         return _save_location
 
+    @staticmethod
+    def report_updated_data(request):
+        def _report_updated_data(self):
+            Report(request).report_added_car(self)
+            for subscriber in Subscriber.get_subscribers(self.car_id):
+                Report(subscriber, close_connection=False).report_to_subscriber(self)
+        return _report_updated_data
 
     def distance(self, location):
         return location.distance(Coordinates(self.latitude, self.longitude))

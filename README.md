@@ -26,6 +26,10 @@ curl --request POST 'http://localhost:8090/car?id=42&ll=37.412021,11.896277'
 
 curl --request GET  'http://localhost:8090/car?id=42'
 
+* subscribe to car location updates
+
+curl --request GET  'http://localhost:8090/subscribe?id=42'
+
 * get nearest cars
 
 curl --request GET 'http://localhost:8090/nearest_cars?ll=37.412021,11.896277&count=11'
