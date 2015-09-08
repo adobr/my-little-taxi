@@ -28,7 +28,7 @@ curl --request GET  'http://localhost:8090/car?id=42'
 
 * subscribe to car location updates
 
-curl --request GET  'http://localhost:8090/subscribe?id=42'
+curl --request GET  'http://localhost:8090/subscribe?id=42' --no-buffer
 
 * get nearest cars
 
