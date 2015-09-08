@@ -3,13 +3,26 @@ from math import radians, cos, sin, asin, sqrt
 
 class Coordinates():
     def __init__(self, latitude, longitude):
-        #todo: add validation
         self.latitude = latitude
         self.longitude = longitude
 
     @classmethod
     def from_string(cls, s):
-        return Coordinates(float(s.split(',')[0]), float(s.split(',')[1]))
+        format_error = "Incorrect ll format: should be two comma separated numbers(e.g. 55.45,37.36)"
+        splitted = s.split(',')
+        if len(splitted) != 2:
+            raise Exception(format_error)
+        try:
+            latitude = float(splitted[0])
+            longitude = float(splitted[1])
+        except:
+            raise Exception(format_error)
+        if latitude > 90.0 or latitude < -90.0:
+            raise Exception("Latitude can be in range [-90.0, 90.0]")
+        if longitude > 180.0 or longitude < -180.0:
+            raise Exception("Longittude can be in range [-180.0, 180.0]")
+        print 'Ok, ok {},{}'.format(latitude, longitude)
+        return Coordinates(latitude, longitude)
 
     def __str__(self):
         return "{},{}".format(self.latitude, self.longitude)

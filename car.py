@@ -1,5 +1,7 @@
 import datetime
+from heapq import nsmallest
 
+from twisted.internet.defer import Deferred
 from twistar.dbobject import DBObject
 
 from coordinates import Coordinates
@@ -44,3 +46,26 @@ class Car(DBObject):
 
     def distance(self, location):
         return location.distance(Coordinates(self.latitude, self.longitude))
+
+    @staticmethod
+    def report_nearest(request, location):
+        def _report(cars):
+            if not cars:
+                request.write('We have no cars at all!')
+            else:
+                for car in cars:
+                    request.write("{0}\t-\t{1:.2f}km\n".format(car.report_itself(),
+                                                               car.distance(location)))
+            request.finish()
+        return _report
+
+    @staticmethod
+    def find_nearest(request, location, count):
+        def _find_nearest(cars):
+            d = Deferred()
+            nearest_cars = nsmallest(count, cars, key=lambda car: car.distance(location))
+            d.callback(nearest_cars)
+            return d.addCallback(Car.report_nearest(request, location))
+
+        return _find_nearest
+
