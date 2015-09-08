@@ -10,7 +10,8 @@ from twisted.python.logfile import DailyLogFile
 
 
 from coordinates import Coordinates
-from car import Car, report_error
+from car import Car
+from report import Report
 
 
 def parse_args(request, required):
@@ -33,8 +34,8 @@ class CarResource(resource.Resource):
             (car_id,) = parse_args(request, ['car_id'])
         except Exception as e:
             return e.message
-        Car.findBy(car_id=car_id).addCallbacks(Car.report(request),
-                                               report_error(request))
+        Car.findBy(car_id=car_id).addCallbacks(Report(request).report_found_cars,
+                                               Report(request).report_error)
         # TODO: send info until connection is broken
         return server.NOT_DONE_YET
 
@@ -46,7 +47,7 @@ class CarResource(resource.Resource):
         except Exception as e:
             return e.message
         Car.findOrCreate(car_id=car_id).addCallbacks(Car.save_location(request, location),
-                                                     report_error(request))
+                                                     Report(request).report_error)
         return server.NOT_DONE_YET
 
 
@@ -62,7 +63,7 @@ class NearestCarsResource(resource.Resource):
             return e.message
         location = Coordinates.from_string(ll)
         Car.all().addCallbacks(Car.find_nearest(request, location, count),
-                               report_error(request))
+                               Report(request).report_error)
         return server.NOT_DONE_YET
 
 
