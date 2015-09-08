@@ -7,6 +7,14 @@ from twistar.dbobject import DBObject
 from coordinates import Coordinates
 
 
+def report_error(request):
+    def _report_error(error):
+        request.write("Something went wrong.")
+        request.write(str(error))
+        request.finish()
+    return _report_error
+
+
 class Car(DBObject):
     @classmethod
     def tablename(cls):
@@ -32,17 +40,18 @@ class Car(DBObject):
             self.latitude = location.latitude
             self.longitude = location.longitude
             self.updated = datetime.datetime.now()
-            self.save().addCallback(Car.report_ok(request))
+            self.save().addCallbacks(Car.report_added(request),
+                                     report_error(request))
 
         return _save_location
 
     @staticmethod
-    def report_ok(request):
-        def _report_ok(car):
+    def report_added(request):
+        def _report_added(car):
             request.write("You data was successfully added. {}".format(car.report_itself()))
             request.finish()
 
-        return _report_ok
+        return _report_added
 
     def distance(self, location):
         return location.distance(Coordinates(self.latitude, self.longitude))
@@ -65,7 +74,7 @@ class Car(DBObject):
             d = Deferred()
             nearest_cars = nsmallest(count, cars, key=lambda car: car.distance(location))
             d.callback(nearest_cars)
-            return d.addCallback(Car.report_nearest(request, location))
-
+            return d.addCallbacks(Car.report_nearest(request, location),
+                                  report_error(request))
         return _find_nearest
 

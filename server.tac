@@ -1,20 +1,16 @@
-#!/usr/bin/env python
+# You can run this .tac file directly with:
+#    twistd -ny server.tac
+
 
 from twisted.web import server, resource
-from twisted.enterprise import adbapi
-from twisted.internet import reactor
+from twistar.dbconfig.mysql import ReconnectingMySQLConnectionPool
+from twisted.application import service, internet
 from twistar.registry import Registry
+from twisted.python.logfile import DailyLogFile
+
 
 from coordinates import Coordinates
-from car import Car
-
-
-def report_error(request):
-    def _report_error(error):
-        request.write("Something went wrong.")
-        request.write(str(error))
-        request.finish()
-    return _report_error
+from car import Car, report_error
 
 
 def parse_args(request, required):
@@ -70,7 +66,7 @@ class NearestCarsResource(resource.Resource):
         return server.NOT_DONE_YET
 
 
-def main():
+def get_web_service():
     #from twisted.python import log
     #log.startLogging(sys.stdout)
 
@@ -79,13 +75,15 @@ def main():
     root.putChild("nearest_cars", NearestCarsResource())
 
     # Connect to the DB
-    Registry.DBPOOL = adbapi.ConnectionPool('MySQLdb', user="little_server",
-                                            passwd="ne6rexeT", db="little_taxi",
-                                            cp_reconnect=True)
+    Registry.DBPOOL = ReconnectingMySQLConnectionPool('MySQLdb', user="little_server",
+                                                      passwd="ne6rexeT", db="little_taxi",
+                                                      cp_reconnect=True, cp_max=10)
 
-    # Start reactor
-    reactor.listenTCP(8090, server.Site(root))
-    reactor.run()
+    # Create server
+    web_server = server.Site(root)
+    return internet.TCPServer(8090, web_server)
 
-if __name__ == '__main__':
-    main()
+application = service.Application("Demo application")
+logfile = DailyLogFile("little_taxi.log", ".")
+service = get_web_service()
+service.setServiceParent(application)

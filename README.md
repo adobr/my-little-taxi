@@ -14,7 +14,7 @@ sudo mysqld --init-file init_db.sql
 
 Start server
 ------------
-python server.py
+twistd -ny server.tac --logfile=server.log
 
 Usage
 -----

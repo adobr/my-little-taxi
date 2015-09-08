@@ -73,9 +73,9 @@ def main():
             requester.make_post_car_request()
         else:
             raise Exception("Incorrect request_type {}".format(args.request_type))
-    print("{} {} requests in {} seconds".format(args.requests_count,
-                                                args.request_type,
-                                                time.time() - start))
+    print("{0} {1} requests in {2:.2f} seconds".format(args.requests_count,
+                                                       args.request_type,
+                                                       time.time() - start))
 
 if __name__ == "__main__":
     main()
