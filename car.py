@@ -36,6 +36,7 @@ class Car(DBObject):
             Report(request).report_added_car(self)
             for subscriber in Subscriber.get_subscribers(self.car_id):
                 Report(subscriber, close_connection=False).report_to_subscriber(self)
+
         return _report_updated_data
 
     def distance(self, location):
