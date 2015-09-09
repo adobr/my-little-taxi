@@ -5,7 +5,7 @@ Small twisted web server
 Install requirements
 -------------------
 
-apt-get install mysql-service python-mysqldb
+apt-get install mysql-server python-mysqldb
 
 pip install -r requirements.txt
 
