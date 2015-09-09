@@ -5,9 +5,9 @@ Small twisted web server
 Install requirements
 -------------------
 
-apt-get install mysql-server python-mysqldb
+sudo apt-get install mysql-server python-mysqldb
 
-pip install -r requirements.txt
+sudo pip install -r requirements.txt
 
 Start database
 --------------
@@ -21,15 +21,15 @@ Usage
 -----
 * set car location
 
-curl --request POST 'http://localhost:8090/car?id=42&ll=37.412021,11.896277'
+curl --request POST 'http://localhost:8090/car?car_id=42&ll=37.412021,11.896277'
 
 * get car location
 
-curl --request GET  'http://localhost:8090/car?id=42'
+curl --request GET  'http://localhost:8090/car?car_id=42'
 
 * subscribe to car location updates
 
-curl --request GET  'http://localhost:8090/subscribe?id=42' --no-buffer
+curl --request GET  'http://localhost:8090/subscribe?car_id=42' --no-buffer
 
 * get nearest cars
 
