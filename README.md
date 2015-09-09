@@ -4,14 +4,13 @@ Small twisted web server
 
 Install requirements
 -------------------
-
 sudo apt-get install mysql-server python-mysqldb
 
 sudo pip install -r requirements.txt
 
-Start database
+Init database
 --------------
-sudo mysqld --init-file init_db.sql
+mysql -u root -p < init_db.sql
 
 Start server
 ------------
