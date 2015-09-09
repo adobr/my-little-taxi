@@ -10,7 +10,8 @@ sudo pip install -r requirements.txt
 
 Init database
 --------------
-mysql -u root -p < init_db.sql
+mysql -u root < init_db.sql
+(add -p if you have set a password to mysql during installation)
 
 Start server
 ------------
