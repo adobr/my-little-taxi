@@ -41,5 +41,6 @@ class TestClass():
         requests.post("{}?car_id={}&ll={}".format(CAR_URL, 1, "0.0,0.0"))
         url = "{}?ll={}&count={}".format(NEAREST_CAR_URL, "0.0,0.0", 100)
         r = requests.get(url)
+        assert (r.status_code == 200)
         assert ("#00001" in r.text)
         assert ("0km" in r.text)
