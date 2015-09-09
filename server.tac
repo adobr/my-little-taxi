@@ -46,7 +46,8 @@ class CarResource(resource.Resource):
             (car_id, ll) = parse_args(request, ['car_id', 'll'])
             location = Coordinates.from_string(ll)
         except Exception as e:
-            return e.message
+            Report(request).report_error(e)
+            return server.NOT_DONE_YET
         d = Car.findOrCreate(car_id=car_id)
         d.addCallback(Car.save_location(request, location))
         d.addErrback(Report(request).report_error)
@@ -64,7 +65,8 @@ class SubscribeResource(resource.Resource):
         try:
             (car_id,) = parse_args(request, ['car_id'])
         except Exception as e:
-            return e.message
+            Report(request).report_error(e)
+            return server.NOT_DONE_YET
         d = Car.findBy(car_id=car_id)
         d.addCallback(Report(request, close_connection=False).report_found_cars)
         d.addErrback(Report(request).report_error)
@@ -83,7 +85,8 @@ class NearestCarsResource(resource.Resource):
             (ll, count) = parse_args(request, ['ll', 'count'])
             count = int(count)
         except Exception as e:
-            return e.message
+            Report(request).report_error(e)
+            return server.NOT_DONE_YET
         location = Coordinates.from_string(ll)
         d = Car.all()
         d.addCallback(Car.find_nearest(request, location, count))

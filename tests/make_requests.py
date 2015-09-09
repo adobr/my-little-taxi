@@ -5,14 +5,13 @@ import random
 import argparse
 import time
 
-CAR_URL = "http://localhost:8090/car"
-NEAREST_CAR_URL = "http://localhost:8090/nearest_cars"
-
 
 class Requester():
-    def __init__(self, cars_count, verbose):
+    def __init__(self, cars_count, verbose, host="localhost", port=8090):
         self.cars_count = cars_count
         self.verbose = verbose
+        self.car_url = "http://{}:{}/car".format(host, port)
+        self.nearest_car_url = "http://{}:{}/nearest_cars".format(host, port)
 
     def get_random_car_id(self):
         return random.randint(1, self.cars_count)
@@ -26,14 +25,14 @@ class Requester():
         return "{},{}".format(latitude, longitude)
 
     def make_get_car_request(self):
-        url = "{}?car_id={}".format(CAR_URL, self.get_random_car_id())
+        url = "{}?car_id={}".format(self.car_url, self.get_random_car_id())
         r = requests.get(url)
         if self.verbose:
             print r.text
             print
 
     def make_post_car_request(self):
-        url = "{}?car_id={}&ll={}".format(CAR_URL,
+        url = "{}?car_id={}&ll={}".format(self.car_url,
                                           self.get_random_car_id(),
                                           self.get_random_ll())
         r = requests.post(url)
@@ -42,7 +41,7 @@ class Requester():
             print
 
     def make_get_nearest_request(self):
-        url = "{}?ll={}&count={}".format(NEAREST_CAR_URL,
+        url = "{}?ll={}&count={}".format(self.nearest_car_url,
                                          self.get_random_ll(),
                                          self.get_random_count())
         r = requests.get(url)
