@@ -61,7 +61,7 @@ def main():
     args = parser.parse_args()
     requester = Requester(cars_count=args.cars_count, verbose=args.verbose)
     start = time.time()
-    print "Starting {} {} requests".format(args.requests_count,
+    print "Starting {} {} requests...".format(args.requests_count,
                                            args.request_type)
     for i in xrange(args.requests_count):
         if args.request_type == "get_car":

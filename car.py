@@ -15,8 +15,8 @@ class Car(DBObject):
         return 'cars'
 
     def __str__(self):
-        return "{}: #{}: {},{}".format(self.updated, self.car_id.zfill(5),
-                                       self.latitude, self.longitude)
+        return "#{}: {},{} ({})".format(self.car_id.zfill(5), self.latitude,
+                                        self.longitude, self.updated)
 
     @staticmethod
     def save_location(request, location):

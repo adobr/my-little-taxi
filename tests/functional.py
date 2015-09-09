@@ -20,16 +20,12 @@ class TestClass():
     def test_incorrect_data_updation(self):
         url = "{}?ll={}".format(CAR_URL, 1, "0.0,0.0")
         r = requests.post(url)
-        assert (r.text == "Parameter car_id is required.")
-
-    def has_error_message(self, text):
-        return "Something went wrong" in text
+        assert (r.text == "Parameter car_id is required.\n")
 
     def test_non_existent_car(self):
         url = "{}?car_id={}".format(CAR_URL, -1)
         r = requests.get(url)
-        assert (self.has_error_message(r.text))
-        assert ("Car not found in the database." in r.text)
+        assert (r.text == "Car not found in the database.\n" in r.text)
 
     def test_existing_car(self):
         requests.post("{}?ll={}".format(CAR_URL, 1, "0.0,0.0"))

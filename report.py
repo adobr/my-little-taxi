@@ -4,7 +4,7 @@ class Report():
         self.close_connection = close_connection
 
     def report_error(self, error):
-        self.report_result(["Something went wrong.", error])
+        self.report_result(error)
 
     def report_result(self, result):
         self.request.setHeader("content-type", "text/plain")
@@ -28,7 +28,7 @@ class Report():
         self.report_result(result)
 
     def report_added_car(self, car):
-        self.report_result("You data was successfully added. {}".format(str(car)))
+        self.report_result(["You data was successfully added.", car])
 
     def report_found_cars(self, cars):
         if not cars:
