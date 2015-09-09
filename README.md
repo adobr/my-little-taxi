@@ -22,7 +22,7 @@ Usage
 
 curl --request POST 'http://localhost:8090/car?id=42&ll=37.412021,11.896277'
 
-* get car location (todo: subscribe)
+* get car location
 
 curl --request GET  'http://localhost:8090/car?id=42'
 
@@ -34,6 +34,12 @@ curl --request GET  'http://localhost:8090/subscribe?id=42' --no-buffer
 
 curl --request GET 'http://localhost:8090/nearest_cars?ll=37.412021,11.896277&count=11'
 
-Performance testing
+Testing
 -------
+* simple performance test
+
 tests/make_requests.sh
+
+* simple functional tests
+
+py.test tests/functional.py
