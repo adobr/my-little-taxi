@@ -6,6 +6,7 @@ Install requirements
 -------------------
 
 apt-get install mysql-service python-mysqldb
+
 pip install -r requirements.txt
 
 Start database
